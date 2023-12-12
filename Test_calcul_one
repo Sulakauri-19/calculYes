@@ -21,7 +21,8 @@ public class CalculYes {
         String[] inputs = scanner.nextLine().toUpperCase().split(" ");
 
         if (inputs.length != 3) {
-            System.out.println("Некорректный ввод. Пожалуйста, Соблюдайте формат 'число1 операция число2'.");
+            System.out.println("Некорректный ввод и точка");
+            scanner.close();
             return;
         }
 
@@ -29,11 +30,9 @@ public class CalculYes {
         char operation = inputs[1].charAt(0);
         String input2 = inputs[2];
 
-
-
         boolean isRoman1 = isRoman(input1);
         boolean isRoman2 = isRoman(input2);
-        // Добавляем проверку: если одно число римское, а другое арабское, выводим ошибку.
+        // проверка: если одно число римское, а другое арабское, выводит ошибку
         if (isRoman1 != isRoman2) {
             System.out.println("Оба числа должны быть либо римскими, либо арабскими.");
             return;
@@ -52,35 +51,11 @@ public class CalculYes {
         }
     }
 
-    public static int calculate(String roman1, String roman2, char operation) {
-        int number1 = toDecimal(roman1);
-        int number2 = toDecimal(roman2);
-
-        int result = 0;
-
-        switch (operation) {
-            case '+':
-                result = number1 + number2;
-                break;
-            case '-':
-                result = number1 - number2;
-                break;
-            case '*':
-                result = number1 * number2;
-                break;
-            case '/':
-                result = number1 / number2;
-                break;
-            default:
-                System.out.println("Неверная операция");
-        }
-
-        return result;
-    }
-
     public static String toRoman(int number) {
-        if (number == 0)
-            return "N";
+        if (number <= 0) {
+            System.out.println("Ошибка: Римские числа не могут быть отрицательными или нулем.");
+            return "Ошибка";
+        }
 
         StringBuilder roman = new StringBuilder();
         int[] decimalValues = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
@@ -115,7 +90,6 @@ public class CalculYes {
 
         return result;
     }
-
 
     public static int calculate(int number1, int number2, char operation) {
         switch (operation) {
