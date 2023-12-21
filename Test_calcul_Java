@@ -15,9 +15,12 @@ public class CalculYes {
         ROMAN_VALUES.put('M', 1000);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)  {
+        System.out.println("Калькулятор запущен");
+        System.out.println("-------------------");
+        System.out.println("Введите число, опер. мат операции, второе число (типа 1 + 1 или II * III)");
+        System.out.println("Вводить числа больше 10 нельзя!");
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите выражение (например, 'X + II' или '10 - 3'):");
         String[] inputs = scanner.nextLine().toUpperCase().split(" ");
 
         if (inputs.length != 3) {
@@ -32,7 +35,7 @@ public class CalculYes {
 
         boolean isRoman1 = isRoman(input1);
         boolean isRoman2 = isRoman(input2);
-        // проверка: если одно число римское, а другое арабское, выводит ошибку
+
         if (isRoman1 != isRoman2) {
             System.out.println("Оба числа должны быть либо римскими, либо арабскими.");
             return;
@@ -41,14 +44,21 @@ public class CalculYes {
         int number1 = isRoman1 ? toDecimal(input1) : Integer.parseInt(input1);
         int number2 = isRoman2 ? toDecimal(input2) : Integer.parseInt(input2);
 
-        int result = calculate(number1, number2, operation);
+        try {
+            validateInput(number1, number2);
+            int result = calculate(number1, number2, operation);
 
-        // Если оба числа были римскими, конвертируем результат обратно в римское число.
-        if (isRoman1) {
-            System.out.println("Результат: " + toRoman(result));
-        } else {
-            System.out.println("Результат: " + result);
+            if (isRoman1) {
+                System.out.println("Результат: " + toRoman(result));
+            } else {
+                System.out.println("Результат: " + result);
+            }
+        } catch (NumberExceedsLimitException e) {
+            System.out.println("Ошибка: " + e.getMessage());
         }
+
+        System.out.println("-------------------");
+
     }
 
     public static String toRoman(int number) {
@@ -61,12 +71,12 @@ public class CalculYes {
         int[] decimalValues = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
         String[] romanSymbols = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
 
-        int remainingValue = number;
+        int remValue = number;
 
         for (int i = 0; i < decimalValues.length; i++) {
-            while (remainingValue >= decimalValues[i]) {
+            while (remValue >= decimalValues[i]) {
                 roman.append(romanSymbols[i]);
-                remainingValue -= decimalValues[i];
+                remValue -= decimalValues[i];
             }
         }
 
@@ -87,20 +97,19 @@ public class CalculYes {
 
             prevValue = currentValue;
         }
-
         return result;
     }
 
-    public static int calculate(int number1, int number2, char operation) {
-        switch (operation) {
+    public static int calculate(int number1, int number2, char operation)  {
+
+            switch (operation) {
             case '+':
-                return number1 + number2;
+                return  number1 + number2;
             case '-':
                 return number1 - number2;
             case '*':
                 return number1 * number2;
             case '/':
-                // Добавляем проверку на деление на ноль
                 if (number2 == 0) {
                     System.out.println("Ошибка: Деление на ноль.");
                     return 0;
@@ -110,10 +119,24 @@ public class CalculYes {
                 System.out.println("Неверная операция");
                 return 0;
         }
+
     }
 
-    // является ли строка валидным римским числом
-    public static boolean isRoman(String input) {
-        return input.matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$");
+    // является ли валидным
+    public static boolean isRoman(String rome) {
+        return rome.matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$");
     }
+
+    public static void validateInput(int number, int number2) throws NumberExceedsLimitException {
+        if (number > 10 || number2 > 10 || number < 0 || number2 < 0) {
+            throw new NumberExceedsLimitException("Нельзя вводить числа в мат операциях больше 10 и меньше 0!");
+        }
+    }
+}
+
+class NumberExceedsLimitException extends Exception {
+    public NumberExceedsLimitException(String message) {
+        super(message);
+    }
+
 }
